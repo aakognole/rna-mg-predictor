@@ -58,7 +58,6 @@ coorstat (){
     echo "-------------------------------------------"
 }
 
-> setup.gmx.log
 coorstat 'temp.1.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 box=$xbox
@@ -71,7 +70,7 @@ echo "Enter boxsize you want to set (in Angstroms) (recommended = $box rounded u
 read rep
 box=`echo $rep | awk '{printf "%.3f",$1}'`
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-${GMXDIR}/gmx solvate -cp temp.1.pdb -cs -o temp.1.1.pdb -box 9 2>> setup.gmx.log
+${GMXDIR}/gmx solvate -cp temp.1.pdb -cs -o temp.1.1.pdb -box 9 > gmx.log 2> error.log
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 nsol=`grep OW temp.1.1.pdb | wc -l`
 rm temp.1.1.pdb
@@ -107,14 +106,14 @@ $convpdb -translate $dx $dy $dz temp.1.pdb >> temp.2.pdb
 
 coorstat 'temp.2.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-> setup.gmx.log
-${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol}
 
-${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg}
+${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol} > gmx.log 2> error.log
 
-${GMXDIR}/gmx insert-molecules -seed 926651 -f temp.4.pdb -ci ../toppar/charmm36.ff/mol/pot.pdb -o temp.5.pdb -nmol ${npot}
+${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg} > gmx.log 2> error.log
 
-${GMXDIR}/gmx insert-molecules -seed 982928 -f temp.5.pdb -ci ../toppar/charmm36.ff/mol/cla.pdb -o temp.6.pdb -nmol ${ncla}
+${GMXDIR}/gmx insert-molecules -seed 926651 -f temp.4.pdb -ci ../toppar/charmm36.ff/mol/pot.pdb -o temp.5.pdb -nmol ${npot} > gmx.log 2> error.log
+
+${GMXDIR}/gmx insert-molecules -seed 982928 -f temp.5.pdb -ci ../toppar/charmm36.ff/mol/cla.pdb -o temp.6.pdb -nmol ${ncla} > gmx.log 2> error.log
 
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 cp temp.6.pdb system.pdb

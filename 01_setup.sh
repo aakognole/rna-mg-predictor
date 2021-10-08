@@ -2,11 +2,13 @@
 echo "Enter job name:"
 read jobname
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
-echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx"
+GMX=`which gmx`
+echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: $GMX)"
 read GMXDIR
 export GMXDIR=$GMXDIR
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
-echo "Enter path to python binary i.e. \${PYTHONDIR}/python"
+PYTHON=`which python`
+echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
 read PYTHONDIR
 export PYTHONDIR=$PYTHONDIR
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
