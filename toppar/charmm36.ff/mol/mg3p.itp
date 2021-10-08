@@ -1,0 +1,80 @@
+
+[ moleculetype ]
+; molname   nrexcl
+MG3P        3
+
+[ atoms ]
+; id    at type     res nr  residu name at name  cg nr  charge	mass
+1   	MG          1       MG3P        MG       1      2       24.30500
+2       OT          1       MG3P        O1       2     -0.834   15.99940
+3       HT          1       MG3P        H11      2      0.417    1.00800
+4       HT          1       MG3P        H12      2      0.417    1.00800
+5       OT          1       MG3P        O2       3     -0.834   15.99940
+6       HT          1       MG3P        H21      3      0.417    1.00800
+7       HT          1       MG3P        H22      3      0.417    1.00800
+8       OT          1       MG3P        O3       4     -0.834   15.99940
+9       HT          1       MG3P        H31      4      0.417    1.00800
+10      HT          1       MG3P        H32      4      0.417    1.00800
+
+[ bonds ]
+; ai  aj  func  b0      k
+  1   2   1     0.186   104600
+  1   5   1     0.186   104600
+  1   8   1     0.186   104600
+
+;[ angles ]
+;  ai  aj  ak  func  theta  k
+;    2   1   5  1     90     500
+;    5   1   8  1     90     500
+;    2   1   8  1     90     500
+
+; manual setup of contraints for water since
+; SETTLE will not work on multiple blocks of SOL
+[ constraints ]
+; ai  aj  func  b0
+; water 1
+   2   3   1    0.09572     ; O-H    
+   2   4   1    0.09572     ; O-H
+   3   4   1    0.15139     ; H-H
+; water 2
+   5   6   1    0.09572     ; O-H
+   5   7   1    0.09572     ; O-H
+   6   7   1    0.15139     ; H-H
+; water 3
+   8   9   1    0.09572     ; O-H
+   8   10  1    0.09572     ; O-H
+   9   10  1    0.15139     ; H-H
+
+; should be taken care of by nrexcl = 2, but just in case
+[ exclusions ]
+; water 1
+    2   3   4
+    3   2   4
+    4   2   3
+; water 2
+    5   6   7
+    6   5   7
+    7   5   6
+; water 3
+    8   9   10
+    9   8   10
+    10  8   9
+
+; Waters may drift away over time or exchange, though this 
+; process should be very slow (millisecond time scale)
+; Put option here to restrain distance between MG and O to
+; keep the six waters bound
+; Normal coordination geometry has MG-O distances between
+; 0.195 and 0.205 nm
+; Restraints here apply no biasing potential between 0 - 0.21 nm,
+; but quadratic restraint beyond 0.21 nm and linear beyond 0.25 nm
+#ifdef DISRES
+[ distance_restraints ]
+;   ai  aj  type  index     type'   low     up1     up2     fac
+    1   2   1       0       1       0.0     0.21    0.25    1
+    1   5   1       0       1       0.0     0.21    0.25    1
+    1   8   1       0       1       0.0     0.21    0.25    1
+    2   5   1       1       1       0.0     0.285   0.30    5
+    5   8   1       1       1       0.0     0.285   0.30    5
+    8   2   1       1       1       0.0     0.285   0.30    5
+#endif

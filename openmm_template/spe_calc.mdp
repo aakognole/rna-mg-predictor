@@ -1,0 +1,60 @@
+; ------equil.mdp------
+
+gen_vel             =  yes
+gen_temp            =  303.15
+gen_seed            =  270419941
+
+integrator           = md
+tinit                = 0.0
+dt                   = 0.002
+nsteps               = 10000      ; 100 ps
+
+nstcomm              = 1000       ; freq for CoM removal
+nstcalcenergy        = -1         ; this sets it to nstlist
+
+;------nonbond------
+cutoff-scheme        = Verlet
+rlist                = 1.0
+nstlist              =  10        ; freq for updating verlet list
+ns_type              =  grid      ; check atoms in neighboring grid cells only for making vlist
+
+vdwtype              = cutoff     ;
+vdw-modifier         = Potential-switch
+rvdw                 = 0.8
+rvdw_switch          = 0.5        ; vdw switched between this and rvdw to 0
+DispCorr             = EnerPres   ;
+
+coulombtype          =  pme       ; Fast Particle-Mesh Ewald electrostatics
+rcoulomb             =  0.8       ; distance for direct coulomb cut-off
+fourierspacing       =  0.12      ; maximum grid spacing (nm) for the FFT grid
+pme_order            =  4         ; cubic interpolation for PME
+ewald_rtol           = 1e-5       ;
+
+;------pbc------
+pbc                  = xyz        ; use pbc in all directions
+
+
+;------constraints------
+constraints          = hbonds     ; all bonds with H-atoms are constrained
+constraint_algorithm = lincs      ;
+continuation         = no         ;
+
+;------temperature and pressure------
+Tcoupl               = v-rescale  ; using v-rescale for equlibration
+tau_t                = 0.1       ; 
+ref_t                = 303.15       ; reference temp for coupling
+tc_grps              = System
+
+Pcoupl               = Berendsen ;
+Pcoupltype           = isotropic         ;
+tau_p                =  1.0              ;
+compressibility      =  4.5e-5           ;
+ref_p                =  1.0              ;
+refcoord-scaling     =  all              ;
+
+;------output------
+nstxout              = 0        ; freq to write coor to trajectory
+nstxtcout            = 50000        ; freq to write coordinates to xtc trajectory
+nstvout              = 0           ; freq to write velocities to trajectory
+nstlog               = 10000        ; freq to write energy to log file
+nstenergy            = 10000        ; freq for storing energy and data

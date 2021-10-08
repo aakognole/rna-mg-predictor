@@ -1,0 +1,37 @@
+par:charmm36.ff/ffnonbonded.itp
+par:charmm36.ff/silcs.itp
+par:charmm36.ff/nbfix.itp
+fragitp:charmm36.ff/mol/sol.itp
+fragitp:charmm36.ff/mol/mg.itp
+fragitp:charmm36.ff/mol/pot.itp
+fragitp:charmm36.ff/mol/cla.itp
+
+atomtypes:charmm36.ff/atomtypes.atp
+monomerdir:charmm36.ff/mol
+top:<iptop>
+pdb:<ippdb>
+protitp:toppar/RNAA.itp
+
+grid_dx:   1.200
+simulation_box_size:  <simulation_box_size> <simulation_box_size> <simulation_box_size>
+PME_grid_space:  1.200
+real_space_cutoff:  10.00
+
+box_size:  <gcmc_box_size> <gcmc_box_size> <gcmc_box_size>
+cutoff:  10.000
+gc_center:  <centerx> <centery> <centerz>
+sys_center: <centerx> <centery> <centerz>
+fragname:  sol mg pot cla
+fragconc:  55.50 0.01 0.20 0.10
+fragmuex:   <fragmuex>
+maxfrags:   <maxfrags>
+minfrags:   <minfrags>
+mctime:    0.1 0.45 0.45 0.0
+nprint:1000
+conserve_frags:no
+map_generation:no
+op_top:<optop>
+op_pdb:<oppdb>
+initcycle:no
+map_filename_prefix:<no_maps_in_this_version>
+mcsteps:20000
