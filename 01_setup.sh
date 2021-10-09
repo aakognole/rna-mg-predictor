@@ -1,21 +1,22 @@
 #!/bin/bash
 echo "Enter job name:"
 read jobname
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 GMX=`which gmx`
 echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: $GMX)"
 read GMXDIR
 export GMXDIR=$GMXDIR
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 PYTHON=`which python`
 echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
 read PYTHONDIR
 export PYTHONDIR=$PYTHONDIR
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 echo "Enter path to only rna pdb file:"
 read onlypdb
 cp $onlypdb ./prep_system/only_rna.pdb
 cd prep_system
+sed -i -e "s~<jobname>~rna_${jobname}~g" system.top.tmpl
 ./prep_system.sh
 cd ..
 
@@ -31,11 +32,11 @@ if [ ${rest} = y ] ; then
     cd ../..
 else
     rest='false'
-    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
     echo "Only center of mass restraint will be used keep RNA in the center of the box."
     echo "\nPlease provide center location in this format '5.0,5.0,5.0' (values in nanometer) :"
     read CENTEROFMASS
-    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 fi
 
 echo -e "\nDelete existing setup?(y) / Overwrite?(n) / Cancel?(cancel) "
@@ -100,4 +101,5 @@ while [ $run -le $totruns ];do
 done
 
 printf "success!"
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x\n"
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+

@@ -1,5 +1,7 @@
 #!/bin/bash
 cwd=`pwd`
+> gmx.log
+> error.log
 convpdb=$cwd/../bin/toolset/perl/convpdb.pl
 if [ ! -e $convpdb ]; then
     echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
@@ -25,7 +27,7 @@ if [ ! -e ${GMXDIR}/gmx ]; then
     GMXDIR=$rep
 fi
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-${GMXDIR}/gmx pdb2gmx -f temp.0.pdb -o gmx.pdb -p gmx.top -water tip3p -ter -merge all
+${GMXDIR}/gmx pdb2gmx -f temp.0.pdb -o gmx.pdb -p gmx.top -water tip3p -ter -merge all 2>> error.log
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
 l=`wc -l gmx.top | awk '{print $1}'`
@@ -67,15 +69,15 @@ if awk 'BEGIN {exit !('$zbox' >= '$box')}'; then box=$zbox; fi
 #if [[ $zbox -gt $box ]]; then box=$zbox; fi
 box=`echo $box | awk '{printf "%.5f",$1+20.0}'`
 echo "Enter boxsize you want to set (in Angstroms) (recommended = $box rounded up) -"
-read rep
-box=`echo $rep | awk '{printf "%.3f",$1}'`
+read box
+boxn=`echo $box | awk '{printf "%.3f",$1/10.0}'`
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-${GMXDIR}/gmx solvate -cp temp.1.pdb -cs -o temp.1.1.pdb -box 9 > gmx.log 2> error.log
+${GMXDIR}/gmx solvate -cp temp.1.pdb -cs -o temp.1.1.pdb -box ${box} >> gmx.log 2>> error.log
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
 nsol=`grep OW temp.1.1.pdb | wc -l`
 rm temp.1.1.pdb
-nmg=`echo $rep | awk '{printf "%.0f",$1*$1*$1*6.02*0.0001*0.05}'`
+nmg=`echo $box | awk '{printf "%.0f",$1*$1*$1*6.02*0.0001*0.05}'`
 npot=`echo $nmg | awk '{print $1*3}'`
 qtot=`grep -i qtot ../toppar/RNAA.itp | tail -n 1 | awk '{print $11}'`
 ncla=`echo $nmg $npot $qtot | awk '{print 2*$1+$2+$3}'`
@@ -107,11 +109,11 @@ $convpdb -translate $dx $dy $dz temp.1.pdb >> temp.2.pdb
 coorstat 'temp.2.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
-echo "Adding water and ions..."
-${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol} > gmx.log 2> error.log
-${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg} > gmx.log 2> error.log
-${GMXDIR}/gmx insert-molecules -seed 926651 -f temp.4.pdb -ci ../toppar/charmm36.ff/mol/pot.pdb -o temp.5.pdb -nmol ${npot} > gmx.log 2> error.log
-${GMXDIR}/gmx insert-molecules -seed 982928 -f temp.5.pdb -ci ../toppar/charmm36.ff/mol/cla.pdb -o temp.6.pdb -nmol ${ncla} > gmx.log 2> error.log
+echo "Adding water and ions... (This may take few minutes)"
+${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol} >> gmx.log 2>> error.log
+${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg} >> gmx.log 2>> error.log
+${GMXDIR}/gmx insert-molecules -seed 926651 -f temp.4.pdb -ci ../toppar/charmm36.ff/mol/pot.pdb -o temp.5.pdb -nmol ${npot} >> gmx.log 2>> error.log
+${GMXDIR}/gmx insert-molecules -seed 982928 -f temp.5.pdb -ci ../toppar/charmm36.ff/mol/cla.pdb -o temp.6.pdb -nmol ${ncla} >> gmx.log 2>> error.log
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
 cp temp.6.pdb system.pdb
@@ -119,8 +121,7 @@ rm temp.*.pdb
 
 python=${PYTHONDIR}/python
 echo "using python = $python"
-$python ./nohyd.py
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+$python ./nohyd.py 2>> error.log
 echo "                            Completed system preparation!"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 wait
