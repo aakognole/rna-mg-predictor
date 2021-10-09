@@ -8,7 +8,7 @@ ln -s ../toppar ./
 # Setup environment vairables to use OpenMM with CUDA and GROMACS
 python=<PYTHONDIR>/python
 export GMX_MAXBACKUP=-1
-export GXMDIR=<GMXDIR>
+export GMXDIR=<GMXDIR>
 if [ ! -e ${GMXDIR}/gmx ]; then
     echo "Could not find ${GMXDIR}/gmx !! Make sure you have GROMACS installed."
     exit
