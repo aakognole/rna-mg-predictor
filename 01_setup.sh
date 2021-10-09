@@ -3,16 +3,20 @@ echo "Enter job name:"
 read jobname
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 GMX=`which gmx`
-echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: $GMX)"
-read GMXDIR
-export GMXDIR=$GMXDIR
+echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: ${GMX}:0:-4)"
+echo "Press ENTER to continue OR specify path:"
+read rep; if [ $rep ]; then GMXDIR=${rep}; else GMXDIR=${GMX:0:-4}; fi; export GMXDIR=$GMXDIR
+echo "GMXDIR set to $GMXDIR"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 PYTHON=`which python`
 echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
-read PYTHONDIR
-export PYTHONDIR=$PYTHONDIR
+echo "Press ENTER to continue OR specify path:"
+read rep; if [ $rep ]; then PYTHONDIR=${rep}; else PYTHONDIR=${PYTHON:0:-7}; fi
+export PYTHONDIR=${PYTHONDIR}; echo "PYTHONDIR set to ${PYTHONDIR}"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-echo "Enter path to only rna pdb file:"
+echo "Enter path to only rna pdb file"
+echo "(e.g. ./rna.pdb OR step1_pdbreader.pdb from CHARMM-GUI/solution-builder)"
+printf ">>> "
 read onlypdb
 cp $onlypdb ./prep_system/only_rna.pdb
 cd prep_system
