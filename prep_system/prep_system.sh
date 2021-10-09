@@ -57,9 +57,9 @@ coorstat (){
     echo "ZMIN $zmin ZMAX $zmax ZCEN $zcen ZBOX $zbox"
     echo "-------------------------------------------"
 }
-
 coorstat 'temp.1.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 box=$xbox
 if awk 'BEGIN {exit !('$ybox' >= '$box')}'; then box=$ybox; fi
 if awk 'BEGIN {exit !('$zbox' >= '$box')}'; then box=$zbox; fi
@@ -72,6 +72,7 @@ box=`echo $rep | awk '{printf "%.3f",$1}'`
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 ${GMXDIR}/gmx solvate -cp temp.1.pdb -cs -o temp.1.1.pdb -box 9 > gmx.log 2> error.log
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 nsol=`grep OW temp.1.1.pdb | wc -l`
 rm temp.1.1.pdb
 nmg=`echo $rep | awk '{printf "%.0f",$1*$1*$1*6.02*0.0001*0.05}'`
@@ -83,7 +84,7 @@ echo "Will be adding $nsol waters, $nmg Mg2+, $npot K+ and $ncla Cl- ions..."
 echo "proceed? (y) / Enter manually (n):"
 read rep
 if [ "$rep" == "y" ]; then
-    echo "Adding water and ions..."
+    echo " "
 else
     echo "Enter number of water molecules to add (for best guess check step3_pbcsetup.pdb from CHARMM-GUI output)"
     read nsol
@@ -96,29 +97,26 @@ else
 fi
 sed -e "s~<N_SOL>~$nsol~g" -e "s~<N_MG>~$nmg~g" -e "s~<N_POT>~$npot~g" -e "s~<N_CLA>~$ncla~g" system.top.tmpl > system.top
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 dx=`echo $xmin $xmax $xcen $box | awk '{printf "%.5f",($4/2.0)-$3}'`
 dy=`echo $ymin $ymax $ycen $box | awk '{printf "%.5f",($4/2.0)-$3}'`
 dz=`echo $zmin $zmax $zcen $box | awk '{printf "%.5f",($4/2.0)-$3}'`
 echo "Translating coordinates: dx $dx dy $dy dz $dz"
-
 echo "CRYST1  $box  $box  $box  90.00  90.00  90.00 P 1           1" > temp.2.pdb
 $convpdb -translate $dx $dy $dz temp.1.pdb >> temp.2.pdb
-
 coorstat 'temp.2.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
+echo "Adding water and ions..."
 ${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol} > gmx.log 2> error.log
-
 ${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg} > gmx.log 2> error.log
-
 ${GMXDIR}/gmx insert-molecules -seed 926651 -f temp.4.pdb -ci ../toppar/charmm36.ff/mol/pot.pdb -o temp.5.pdb -nmol ${npot} > gmx.log 2> error.log
-
 ${GMXDIR}/gmx insert-molecules -seed 982928 -f temp.5.pdb -ci ../toppar/charmm36.ff/mol/cla.pdb -o temp.6.pdb -nmol ${ncla} > gmx.log 2> error.log
-
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 cp temp.6.pdb system.pdb
 rm temp.*.pdb
-rm setup.gmx.log
+
 python=${PYTHONDIR}/python
 echo "using python = $python"
 $python ./nohyd.py
