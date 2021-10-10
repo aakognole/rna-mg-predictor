@@ -48,7 +48,7 @@ read rest
 if [ ${rest} = y ] ; then
     rest='true'
     cd openmm_template/restraints
-    ${PYTHONDIR}/python set_restraints.py
+    ${PYTHONDIR}/python set_restraints.py 2>> error.log
     cd ../..
 else
     rest='false'
@@ -100,7 +100,7 @@ while [ $run -le $totruns ];do
 	    if [ -e openmm_template/job.tmpl.${1}.sh ]; then
 		sed -e "s/<run>/$run/g" -e "s/<job>/$jobname/g" \
 		    -e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" \
-		    -e "s~<PYTHONDIR>~${PYTHONDIR}~g" openmm_template/job.tmpl.${2}.sh > ${run}/job.sh
+		    -e "s~<PYTHONDIR>~${PYTHONDIR}~g" openmm_template/job.tmpl.${1}.sh > ${run}/job.sh
 	    else
 		echo "There is no job.tmpl.\${1}.sh file to modify!"
 		echo "Copy job.tmpl.sh file to job.tmpl.\${1}.sh and update."
