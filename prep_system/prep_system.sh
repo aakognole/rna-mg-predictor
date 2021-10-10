@@ -67,8 +67,8 @@ if awk 'BEGIN {exit !('$ybox' >= '$box')}'; then box=$ybox; fi
 if awk 'BEGIN {exit !('$zbox' >= '$box')}'; then box=$zbox; fi
 #if [[ $ybox -gt $box ]]; then box=$ybox; fi
 #if [[ $zbox -gt $box ]]; then box=$zbox; fi
-box=`echo $box | awk '{printf "%.5f",$1+20.0}'`
-echo "Enter boxsize you want to set (in Angstroms) (recommended = $box rounded up) -"
+box=`echo $box | awk '{printf "%.5f",$1+24.0}'`
+echo "Enter boxsize you want to set (in Angstroms) (recommended = ${box} Å; round it up) -"
 read box
 boxn=`echo $box | awk '{printf "%.3f",$1/10.0}'`
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
@@ -109,7 +109,7 @@ $convpdb -translate $dx $dy $dz temp.1.pdb >> temp.2.pdb
 coorstat 'temp.2.pdb'
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
-echo "Adding water and ions... (This may take few minutes)"
+echo "Adding water and ions... (This may take few minutes!)"
 ${GMXDIR}/gmx insert-molecules -seed 973475 -f temp.2.pdb -ci ../toppar/charmm36.ff/mol/sol.pdb -o temp.3.pdb -nmol ${nsol} >> gmx.log 2>> error.log
 echo "--> SOL : `grep requested error.log | tail -n 1`"
 ${GMXDIR}/gmx insert-molecules -seed 951573 -f temp.3.pdb -ci ../toppar/charmm36.ff/mol/mg.pdb -o temp.4.pdb -nmol ${nmg} >> gmx.log 2>> error.log

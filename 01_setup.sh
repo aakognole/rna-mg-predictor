@@ -1,24 +1,30 @@
 #!/bin/bash
+
 echo "Enter job name:"
 read jobname
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 GMX=`which gmx`
-echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: ${GMX}:0:-4)"
+echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: ${GMX:0:-4})"
 echo "Press ENTER to continue OR specify path:"
 read rep; if [ $rep ]; then GMXDIR=${rep}; else GMXDIR=${GMX:0:-4}; fi; export GMXDIR=$GMXDIR
 echo "GMXDIR set to $GMXDIR"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 PYTHON=`which python`
 echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
 echo "Press ENTER to continue OR specify path:"
 read rep; if [ $rep ]; then PYTHONDIR=${rep}; else PYTHONDIR=${PYTHON:0:-7}; fi
 export PYTHONDIR=${PYTHONDIR}; echo "PYTHONDIR set to ${PYTHONDIR}"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
 echo "Enter path to only rna pdb file"
 echo "(e.g. ./rna.pdb OR step1_pdbreader.pdb from CHARMM-GUI/solution-builder)"
 printf ">>> "
 read onlypdb
 cp $onlypdb ./prep_system/only_rna.pdb
+
+# Prepare system top and pdb files
 cd prep_system
 sed -i -e "s~<jobname>~rna_${jobname}~g" system.top.tmpl
 ./prep_system.sh
@@ -37,9 +43,12 @@ if [ ${rest} = y ] ; then
 else
     rest='false'
     echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-    echo "Only center of mass restraint will be used keep RNA in the center of the box."
-    echo "\nPlease provide center location in this format '5.0,5.0,5.0' (values in nanometer) :"
-    read CENTEROFMASS
+    echo "Only center of mass restraint on RNA will be used."
+    CENTEROFMASS=`cat prep_system/rna_com.txt`
+    echo -e "Found center of mass of rna at: $CENTEROFMASS (values in nanometer)"
+    echo -e "Press ENTER to continue OR specify location in same format"
+    printf ">>> "
+    read rep; if [ $rep ]; then CENTEROFMASS=${rep}; fi
     echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 fi
 
