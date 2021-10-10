@@ -6,23 +6,33 @@ echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-
 
 GMX=`which gmx`
 echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: ${GMX:0:-4})"
-echo "Press ENTER to continue OR specify path:"
-read rep; if [ $rep ]; then GMXDIR=${rep}; else GMXDIR=${GMX:0:-4}; fi; export GMXDIR=$GMXDIR
-echo "GMXDIR set to $GMXDIR"
+echo "Press ENTER to continue OR specify path"
+printf ">>> "
+read rep; if [ $rep ]; then GMXDIR=${rep}; else GMXDIR=${GMX:0:-4}; fi
+export GMXDIR=$GMXDIR; echo "GMXDIR set to $GMXDIR"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
 PYTHON=`which python`
 echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
 echo "Press ENTER to continue OR specify path:"
+printf ">>> "
 read rep; if [ $rep ]; then PYTHONDIR=${rep}; else PYTHONDIR=${PYTHON:0:-7}; fi
 export PYTHONDIR=${PYTHONDIR}; echo "PYTHONDIR set to ${PYTHONDIR}"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
-echo "Enter path to only rna pdb file"
-echo "(e.g. ./rna.pdb OR step1_pdbreader.pdb from CHARMM-GUI/solution-builder)"
+nslots=`nproc`
+echo "Enter number of cpu core available (Found: nproc = $nslots)"
+echo "Press ENTER to continue OR specify number:"
 printf ">>> "
-read onlypdb
-cp $onlypdb ./prep_system/only_rna.pdb
+read rep; if [ $rep ]; then nslots=${rep}; fi
+export NSLOTS=$nslots
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
+
+echo "Enter path to your only rna pdb file (e.g. rna.pdb"
+printf ">>> "
+read onlyrna
+cp $onlyrna ./prep_system/only_rna.pdb
+echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
 # Prepare system top and pdb files
 cd prep_system
@@ -86,14 +96,14 @@ while [ $run -le $totruns ];do
 	cp -rfp openmm_template/gcmc.tmpl ${run}
         cp -rfp openmm_template/gcmc.equi.tmpl ${run}
 
-	if [ $2 ]; then
-	    if [ -e openmm_template/job.tmpl.${2}.sh ]; then
+	if [ $1 ]; then
+	    if [ -e openmm_template/job.tmpl.${1}.sh ]; then
 		sed -e "s/<run>/$run/g" -e "s/<job>/$jobname/g" \
 		    -e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" \
 		    -e "s~<PYTHONDIR>~${PYTHONDIR}~g" openmm_template/job.tmpl.${2}.sh > ${run}/job.sh
 	    else
-		echo "There is no job.tmpl.${1}.sh file to modify!"
-		echo "Copy job.tmpl.sh file to job.tmpl.${1}.sh and update."
+		echo "There is no job.tmpl.\${1}.sh file to modify!"
+		echo "Copy job.tmpl.sh file to job.tmpl.\${1}.sh and update."
 	    fi
 	else
 	    sed -e "s/<run>/$run/g" -e "s/<job>/$jobname/g" \
@@ -113,6 +123,6 @@ while [ $run -le $totruns ];do
 	run=$((run+1))
 done
 
-printf "success!"
+printf "finished!"
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 

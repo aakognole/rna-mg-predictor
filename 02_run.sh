@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# Use this script to submit jobs on cluster that uses schedular like SLURM 
+
+# If you are running locally, just run job.sh scripts in each run directory. 
+
 totruns=5
 run=1
 while [ $run -le $totruns ];do

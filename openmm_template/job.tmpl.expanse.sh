@@ -1,4 +1,24 @@
 #!/bin/bash
+#SBATCH --job-name="<job>_<run>"
+#SBATCH --output="out_<job>_<run>"
+#SBATCH --partition=gpu-shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --gpus=1
+#SBATCH --mem=2000
+#SBATCH -A mda215
+#SBATCH --no-requeue
+#SBATCH -t 48:00:00
+
+module load cpu
+module load gpu
+module load slurm
+module load cuda10.2/toolkit
+module load gcc
+module load openmpi
+#SET the number of openmp threads
+export OMP_NUM_THREADS=8
+export LD_LIBRARY_PATH=/cm/local/apps/cuda/libs/current/lib64:$LD_LIBRARY_PATH
 
 echo $HOSTNAME `date`
 
