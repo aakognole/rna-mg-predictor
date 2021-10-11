@@ -43,17 +43,17 @@ cd ..
 echo "Now generating production runs..."
 totruns=5
 run=1
-echo -e "\nWant to keep BB and SC restraints during production MD? (y/n)"
+printf "\nWant to keep BB and SC restraints during production MD? (y/n)\n>>> "
 read rest
 if [ ${rest} = y ] ; then
     rest='true'
     cd openmm_template/restraints
     ${PYTHONDIR}/python set_restraints.py 2>> error.log
     cd ../..
+    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 else
     rest='false'
-    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-    echo "Only center of mass restraint on RNA will be used."
+    echo -e "\nOnly center of mass restraint on RNA will be used."
     CENTEROFMASS=`cat prep_system/rna_com.txt`
     echo -e "Found center of mass of rna at: $CENTEROFMASS (values in nanometer)"
     echo -e "Press ENTER to continue OR specify location in same format"
@@ -62,7 +62,8 @@ else
     echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 fi
 
-echo -e "\nDelete existing setup?(y) / Overwrite?(n) / Cancel?(cancel) "
+echo -e "Delete existing setup?(y) / Overwrite?(n) / Cancel?(cancel) "
+printf ">>> "
 read clean
 if [ ${clean} = y ] || [ ${clean} = n ] ; then
     printf "Building $totruns runs for $jobname ..."
@@ -85,7 +86,7 @@ echo "declare -a max_ion_comp=('$NWAT' '$NMG' '$NPOT' '$NCLA');" >> openmm_templ
 echo "declare -a min_ion_comp=('$NWAT' '1' '$NPOT2' '$NCLA');" >> openmm_template/composition
 
 while [ $run -le $totruns ];do
-
+        printf "${run}..."
 	mkdir -p ${run}
 	if [ ${clean} = y ] ;then
 	   rm -rf ./${run}/*
@@ -99,7 +100,7 @@ while [ $run -le $totruns ];do
 	if [ $1 ]; then
 	    if [ -e openmm_template/job.tmpl.${1}.sh ]; then
 		sed -e "s/<run>/$run/g" -e "s/<job>/$jobname/g" \
-		    -e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" \
+		    -e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" -e "s~<NSLOTS>~${NSLOTS}~g" \
 		    -e "s~<PYTHONDIR>~${PYTHONDIR}~g" openmm_template/job.tmpl.${1}.sh > ${run}/job.sh
 	    else
 		echo "There is no job.tmpl.\${1}.sh file to modify!"
@@ -107,7 +108,7 @@ while [ $run -le $totruns ];do
 	    fi
 	else
 	    sed -e "s/<run>/$run/g" -e "s/<job>/$jobname/g" \
-		-e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" \
+		-e "s/<rest>/$rest/g" -e "s~<GMXDIR>~${GMXDIR}~g" -e "s~<NSLOTS>~${NSLOTS}~g" \
 		-e "s~<PYTHONDIR>~${PYTHONDIR}~g" openmm_template/job.tmpl.sh > ${run}/job.sh
 	fi
 	sed -e "s/<CENTEROFMASS>/${CENTEROFMASS}/g" \

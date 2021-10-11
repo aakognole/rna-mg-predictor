@@ -26,6 +26,7 @@ ln -s ../toppar/charmm36.ff ./
 ln -s ../toppar ./
 
 # Setup environment vairables to use OpenMM with CUDA and GROMACS
+export NSLOTS=8
 python=<PYTHONDIR>/python
 export GMX_MAXBACKUP=-1
 export GMXDIR=<GMXDIR>
@@ -111,7 +112,7 @@ do
            #charge=`echo "${charge_on_rna} ${ifrags[1]} ${ifrags[2]} ${ifrags[3]}" | awk '{print $1+($2*2)+($3*1)-($4*1)}'`
 
            ${GMXDIR}/gmx grompp -f spe_calc.mdp -o spe.calc.tpr -c ${ippdb} -p ${iptop} >> gmx.log
-           $mdrun -nt 1 -deffnm spe.calc -s spe.calc.tpr -rerun ${ippdb} >> gmx.log
+           $mdrun -nt $NSLOTS -deffnm spe.calc -s spe.calc.tpr -rerun ${ippdb} >> gmx.log
            PE_md_prod=`grep -A 3 'Coulomb-14' spe.calc.log | tail -n 1 | awk '{printf "%d",$1}'`
 	   echo "${curr}-${cnt} ------0 ------0 ------0 ------0 ------0 ${PE_md_prod}" | awk '{print $1,"\t",$2,"\t",$3,"\t",$4,"\t",$5,"\t",$6,"\t",$7}' >> energy.dat
 	   PE_swap0="------0"; PE_equi0="------0"; PE_swap="------0"; PE_equi="------0"
@@ -172,7 +173,7 @@ do
            fi
 
            ${GMXDIR}/gmx grompp -f spe_calc.mdp -o spe.calc.tpr -c ${oppdb} -p ${optop} >> gmx.log
-           $mdrun -nt 1 -deffnm spe.calc -s spe.calc.tpr -rerun ${oppdb} >> gmx.log
+           $mdrun -nt $NSLOTS -deffnm spe.calc -s spe.calc.tpr -rerun ${oppdb} >> gmx.log
            PE_swap=`grep -A 3 'Coulomb-14' spe.calc.log | tail -n 1 | awk '{printf "%d",$1}'`
 
 	   cp solution.${run}.gc.${curr}.top temp_gc_top
@@ -186,7 +187,7 @@ do
 	   ../bin/mod_equi_gcmc gcmc.equi.${curr}.${cnt}.inp gcmc.equi.${curr}.${cnt}.out -nt $NSLOTS >> equi.accept.${curr}.dat
 
            ${GMXDIR}/gmx grompp -f spe_calc.mdp -o spe.calc.tpr -c ${oppdb} -p ${optop} >> gmx.log
-           $mdrun -nt 1 -deffnm spe.calc -s spe.calc.tpr -rerun ${oppdb} >> gmx.log
+           $mdrun -nt $NSLOTS -deffnm spe.calc -s spe.calc.tpr -rerun ${oppdb} >> gmx.log
            PE_equi=`grep -A 3 'Coulomb-14' spe.calc.log | tail -n 1 | awk '{printf "%d",$1}'`
 
 	   x=0
@@ -230,7 +231,7 @@ do
               rm -rf output.pdb
 
               ${GMXDIR}/gmx grompp -f spe_calc.mdp -o spe.calc.tpr -c ${eqpdb} -p ${optop} >> gmx.log
-              $mdrun -nt 1 -deffnm spe.calc -s spe.calc.tpr -rerun ${eqpdb} >> gmx.log
+              $mdrun -nt $NSLOTS -deffnm spe.calc -s spe.calc.tpr -rerun ${eqpdb} >> gmx.log
               PE_md_equil=`grep -A 3 'Coulomb-14' spe.calc.log | tail -n 1 | awk '{printf "%d",$1}'`
 	      
 	      #Run production
@@ -257,7 +258,7 @@ do
 	      fi
 
               ${GMXDIR}/gmx grompp -f spe_calc.mdp -o spe.calc.tpr -c ${prodpdb} -p ${optop} >> gmx.log
-              $mdrun -nt 1 -deffnm spe.calc -s spe.calc.tpr -rerun ${prodpdb} >> gmx.log
+              $mdrun -nt $NSLOTS -deffnm spe.calc -s spe.calc.tpr -rerun ${prodpdb} >> gmx.log
               PE_md_prod=`grep -A 3 'Coulomb-14' spe.calc.log | tail -n 1 | awk '{printf "%d",$1}'`
 
               status=`grep "%" solution.${run}.prod.${curr}.out | tail -n 1 | awk '{printf "%d",$1}'`

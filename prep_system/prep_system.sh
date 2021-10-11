@@ -68,7 +68,8 @@ if awk 'BEGIN {exit !('$zbox' >= '$box')}'; then box=$zbox; fi
 #if [[ $ybox -gt $box ]]; then box=$ybox; fi
 #if [[ $zbox -gt $box ]]; then box=$zbox; fi
 box=`echo $box | awk '{printf "%.5f",$1+24.0}'`
-echo "Enter boxsize you want to set (in Angstroms) (recommended = ${box} Å; round it up) -"
+echo "Enter boxsize you want to set (in Angstroms) (recommended = ${box} Å; round it up)"
+printf ">>> "
 read box
 boxn=`echo $box | awk '{printf "%.3f",$1/10.0}'`
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
@@ -83,7 +84,8 @@ qtot=`grep -i qtot ../toppar/RNAA.itp | tail -n 1 | awk '{print $11}'`
 ncla=`echo $nmg $npot $qtot | awk '{print 2*$1+$2+$3}'`
 nsol=`echo $nsol $nmg $npot $cla | awk '{print $1-2*($2+$3+$4)}'`
 echo "Will be adding $nsol waters, $nmg Mg2+, $npot K+ and $ncla Cl- ions..."
-echo "proceed? (y) / Enter manually (n):"
+echo "proceed? (y) OR Enter manually (n)"
+printf ">>> "
 read rep
 if [ "$rep" == "y" ]; then
     echo " "

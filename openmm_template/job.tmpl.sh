@@ -6,6 +6,7 @@ ln -s ../toppar/charmm36.ff ./
 ln -s ../toppar ./
 
 # Setup environment vairables to use OpenMM with CUDA and GROMACS
+export NSLOTS=<NSLOTS>
 python=<PYTHONDIR>/python
 export GMX_MAXBACKUP=-1
 export GMXDIR=<GMXDIR>
