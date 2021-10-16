@@ -1,34 +1,13 @@
 #!/bin/bash
 
+cwd=`pwd`
+if [ -e setenv ]; then source setenv; else ./setenv.sh; fi
+
 echo "Enter job name:"
 read jobname
 echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
 
-GMX=`which gmx`
-echo "Enter path to gmx binary i.e. \${GMXDIR}/gmx (Found: ${GMX:0:-4})"
-echo "Press ENTER to continue OR specify path"
-printf ">>> "
-read rep; if [ $rep ]; then GMXDIR=${rep}; else GMXDIR=${GMX:0:-4}; fi
-export GMXDIR=$GMXDIR; echo "GMXDIR set to $GMXDIR"
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-
-PYTHON=`which python`
-echo "Enter path to python binary i.e. \${PYTHONDIR}/python (Found: $PYTHON)"
-echo "Press ENTER to continue OR specify path:"
-printf ">>> "
-read rep; if [ $rep ]; then PYTHONDIR=${rep}; else PYTHONDIR=${PYTHON:0:-7}; fi
-export PYTHONDIR=${PYTHONDIR}; echo "PYTHONDIR set to ${PYTHONDIR}"
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-
-nslots=`nproc`
-echo "Enter number of cpu core available (Found: nproc = $nslots)"
-echo "Press ENTER to continue OR specify number:"
-printf ">>> "
-read rep; if [ $rep ]; then nslots=${rep}; fi
-export NSLOTS=$nslots
-echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-
-echo "Enter path to your only rna pdb file (e.g. rna.pdb"
+echo "Enter path to your only rna pdb file (e.g. rna.pdb)"
 printf ">>> "
 read onlyrna
 cp $onlyrna ./prep_system/only_rna.pdb

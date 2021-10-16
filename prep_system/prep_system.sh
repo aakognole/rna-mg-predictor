@@ -1,21 +1,6 @@
 #!/bin/bash
 
-cwd=`pwd`
-convpdb=$cwd/../bin/toolset/perl/convpdb.pl
-if [ ! -e $convpdb ]; then
-    echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-    printf "Installing MMTSB Toolset..."
-    cd ../bin
-    ./install_mmtsb.sh
-    cd $cwd
-    if [ ! -e $convpdb ]; then
-	echo "Something went wrong! MMTSB Toolset could not be installed..."
-	echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-    else
-	printf "success\n"
-	echo -e "\n-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-\n"
-    fi
-fi
+source ../setenv
 
 $convpdb -renumber 1 -setchain ' ' only_rna.pdb > temp.0.pdb
 

@@ -9,10 +9,18 @@ run=1
 while [ $run -le $totruns ];do
     cd ${run}
     if [ $1 ]; then
-	sbatch job.sh
+	if [ $1 == "sbatch" ]; then
+	    sbatch job.sh
+	elif [ $1 == "qsub" ]; then
+	    qsub job.sh
+	fi
     else
-	qsub job.sh
+	printf "Running: run - $run \n"
+	bash job.sh > job.out
+	wait
     fi
     cd ..
     run=$((run+1))
 done
+echo "Done!"
+exit

@@ -1,0 +1,4 @@
+export GMXDIR=/home/akognole/bin
+export PYTHONDIR=/home/akognole/modules/miniconda3/bin
+export convpdb=/home/akognole/github/rna-mg-predictor/bin/toolset/perl/convpdb.pl
+export NSLOTS=4
